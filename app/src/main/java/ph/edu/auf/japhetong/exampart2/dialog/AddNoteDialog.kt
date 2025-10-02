@@ -1,21 +1,34 @@
 package ph.edu.auf.japhetong.exampart2.dialog
 
-import android.app.AlertDialog
 import android.app.Dialog
-import android.app.DialogFragment
 import android.os.Bundle
-
-import ph.edu.auf.japhetong.exampart2.databinding.DialogAddNoteBinding
+import android.view.LayoutInflater
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
+import ph.edu.auf.japhetong.exampart2.R
 import ph.edu.auf.japhetong.exampart2.models.NoteModel
 
-class AddNoteDialog(private val onNoteAdded: (NoteModel) -> Unit) : DialogFragment() {
+class AddNoteDialog(
+    private val onNoteAdded: (NoteModel) -> Unit
+) : DialogFragment() {
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val binding = DialogAddNoteBinding.inflate(layoutInflater)
+        val view = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_add_note, null)
+
+        val etTitle = view.findViewById<EditText>(R.id.etTitle)
+        val etContent = view.findViewById<EditText>(R.id.etContent)
 
         return AlertDialog.Builder(requireContext())
             .setTitle("Add Note")
+            .setView(view)
             .setPositiveButton("Add") { _, _ ->
-
+                val title = etTitle.text.toString().trim()
+                val content = etContent.text.toString().trim()
+                if (title.isNotEmpty() || content.isNotEmpty()) {
+                    onNoteAdded(NoteModel(title, content))
+                }
             }
             .setNegativeButton("Cancel", null)
             .create()
